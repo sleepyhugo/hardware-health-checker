@@ -1,27 +1,58 @@
-# Hardware Health & Inventory Checker (Python)
+# hardware-health-checker
 
-A simple Python CLI tool that collects basic system hardware/OS information, runs quick health checks, and logs results for inventory-style tracking.
+A small Python tool that checks your computer's OS, CPU, memory, and disk, warns you if disk or memory is running low, and saves each check to a file so you can look back at them later.
 
-## Features
-- Collects system info: OS, CPU cores, RAM usage, disk usage
-- Basic health warnings (high disk usage, low available RAM)
-- Appends each run to a JSON log file (`hardware_log.json`)
-- Menu options to view recent logs and export the latest report (`latest_report.txt`)
+One file. Only needs `psutil`.
 
-## Requirements
-- Python 3.x
-- `psutil`
+## What it checks
 
-Install dependency:  
-`python -m pip install psutil`
+- **OS** - name, version, and architecture
+- **CPU** - how many cores you have
+- **RAM** - total, free, and percent used
+- **Disk** - total, used, and free space for **one** drive: the one you run the script from
 
-## Run
-`python hardware_checker.py`
+## Warnings
 
-## Output Files  
-- `hardware_log.json` - stores a history of system snapshots + warnings
-- `latest_report.txt` - exported text report from the most recent run
+Two warnings, with fixed limits:
 
-## Notes  
-This is a lightweight, beginner-friendly project meant to demonstrate basic monitoring, documentation, and repeatable health checks similar to lab or hardware farm workflows.
+- Disk is 85% full or more
+- Free memory is 2 GB or less
 
+To change these, edit the numbers in `health_checks()`.
+
+## Menu
+
+1. Run a check and save it
+2. Show the last 5 saved checks
+3. Save the newest check as a text file
+4. Quit
+
+## Setup
+
+Needs Python 3.9 or newer.
+
+```
+python -m pip install psutil
+python hardware_checker.py
+```
+
+You pick options from a menu, so it can't be run on a schedule or from a script yet.
+
+## Files it makes
+
+Both are saved in the folder you run the script from, so running it from a different folder starts a separate log.
+
+- `hardware_log.json` - all past checks
+- `latest_report.txt` - the newest check as plain text
+
+## Known problems
+
+- **The log can get wiped.** If `hardware_log.json` gets damaged, the script treats it as empty and overwrites it on the next run. You lose every past check and it doesn't tell you.
+- Saved checks don't record which computer they came from.
+- Only one drive is checked.
+- No CPU load, temperature, or drive health info.
+- No tests yet.
+
+## What it is not
+
+This only looks at the computer it's running on. It doesn't run in the background, doesn't have a web API, and doesn't check other machines.
